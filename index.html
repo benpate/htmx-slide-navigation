@@ -1,0 +1,97 @@
+<html>
+<head>
+<style>
+
+	#container {
+		box-sizing:border-box;
+		width:50%;
+		overflow-x:hidden;
+	}
+
+	#stack {
+		display:flex;
+		flex-direction:row;
+		flex-wrap:nowrap;
+		align-items:flex-start;
+		width:100%;
+
+		vertical-align: top;
+		box-sizing: border-box;
+	}
+
+	#stack.moving {
+		width:200%;
+	}
+
+	#stack > div {
+		display:inline-block;
+		width:100%;
+		border:solid 1px black;
+		background-color:white;
+		padding:20px;
+		word-wrap: wrap;
+	}
+
+	button {
+		background-color:blue;
+		color:white;
+		padding:10px 20px;
+		border:none;
+	}
+</style>
+
+<script src="https://unpkg.com/htmx.org"></script>
+<script src="https://unpkg.com/hyperscript.org"></script>
+<script>
+
+	function forward() {
+	
+		var animation
+		var stack = document.getElementById("stack")
+		var width = stack.offsetWidth
+		var duration = 400
+
+		htmx.addClass(stack, "moving")
+
+		animation = stack.animate([
+			{transform:`translateX(0px)`},
+			{transform:`translateX(-${width}px)`}
+		], {
+			duration: duration,
+			easing:"ease-in-out",
+		})
+
+		animation.finished.then(function() {
+			htmx.removeClass(stack, "moving")
+			htmx.remove(stack.firstChild);
+		})
+	}
+
+</script>
+</head>
+<body>
+
+	<div id="container">
+	<div id="stack" 
+		hx-push-url="true" 
+		hx-target="#stack" 
+		hx-swap="beforeend"><div>
+			<h1>Index</h1>
+			<p>
+				This is a *very* rough demo of slider navigation using htmx.  There are a number of things that still need work.
+				<ul>
+					<li>Back Button does not work / does not slide.</li>
+					<li>HTML cannot have any whitespace, or else the slider breaks horribly.</li>
+					<li>Currently, every link needs special slider code attached.</li>
+					<li>History API breaks sometimes, though this might not be noticeable with a real app server running behind this.</li>
+				</ul>
+			</p>
+			<button hx-get="1.html" _="on htmx:afterOnLoad call forward()">Next &gt;</button>
+		</div></div>
+	</div>
+
+	<br>
+	<a href="index.html">Home</a>
+
+</body>
+</html>
